@@ -27,6 +27,42 @@ A lightweight database for storing user and book data, coupled with SQLAlchemy f
 ### Bcrypt for Flask: 
 Ensures secure storage of user passwords through hashing.
 
+### Setup and Installation
+Optional but recommended - Create a virtual environment for the project to manage dependencies.
+```
+python -m venv venv
+```
+Install the required dependencies using pip.
+```
+pip install -r requirements.txt
+```
+### Running the Application
+To run the application, execute the following command in the terminal with some port number e.g. 9000.
+```
+python runserver.py <port_number>
+```
+### Database Initialization
+I have already created a database with some test records under instance/book_exchange.db. If you wish to start with a fresh database, delete the existing database and run the following command.
+```
+python models.py
+```
+
+### Accessing the Application
+Access the application through the following URL in your browser, replacing <port_number> with the port number specified during execution:
+```
+http://localhost:<port_number>
+```
+### Testing Credentials (If using the provided database file)
+Use the following credentials to test the application:
+```
+Email: bdllharshad@gmail.com
+Password: 123456910
+```
+```
+Email: shaheer@gmail.com
+Password: 123456910
+```
+
 ### Achievements and Future Plans
 Given the constrained development period, the project lays a solid foundation with key functionalities implemented. Future enhancements would focus on:
 
@@ -39,7 +75,6 @@ Displaying potential matches and recommendations based on user preferences and b
 ### Advanced Search Features: 
 Improving search functionality with AJAX for real-time filtering and results.
 
-### Setup and Installation
 
 
 Acknowledgments
