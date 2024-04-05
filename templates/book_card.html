@@ -1,0 +1,73 @@
+<div class="book-card-and-like-button">
+    <div class="book-card" onclick="window.location.href='{{ url_for('view_book', book_id=book.id) }}';">
+        <div class="book-content">
+            <h3 class="book-title">{{ book.title }}</h3>
+            <p class="book-author">By {{ book.author }}</p>
+            <p class="book-genre">Genre: {{ book.genre or 'Not specified' }}</p>
+            <p class="book-year">Year: {{ book.year or 'Not specified' }}</p>
+            <p class="book-rating">Rating: {{ book.rating or 'Not specified' }}</p>
+            <p class="book-owner">Posted by: <a href="{{ url_for('profile', user_id=book.user.id) }}" class="">{{book.user.name}}</a> </p>
+            <p>{{ book.review[:150] }}{% if book.review|length > 150 %}...{% endif %}</p>
+        </div>
+    </div>
+    {% if current_user.is_authenticated %}
+    {% if book.user_id != current_user.id %}
+        <button class="like-btn {{ 'liked' if book.is_liked else 'not-liked' }}" data-book-id="{{ book.id }}">
+            {% if book.is_liked %}
+                Unlike
+            {% else %}
+                Like
+            {% endif %}
+        </button>
+    {% else %}
+        <button class="yours" disabled>Yours</button>
+    {% endif %}
+{% else %}
+    <button class="redirect" onclick="location.href='{{ url_for('login') }}'">Log in to like</button>
+{% endif %}
+
+</div>
+
+<script>
+    let likeRequest = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('like-btn')) {
+                const button = e.target;
+                const bookId = button.getAttribute('data-book-id');
+                const isLiked = button.classList.contains('liked');
+                const action = isLiked ? 'unlike_book' : 'like_book';
+
+                if (likeRequest) {
+                    likeRequest.abort();
+                }
+
+                likeRequest = fetch(`/${action}/${bookId}`, { method: 'POST' })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            console.log(`Book ${bookId} ${action === 'like_book' ? 'liked' : 'unliked'}`);
+                            button.classList.toggle('liked', !isLiked);
+                            button.textContent = isLiked ? 'Like' : 'Unlike';
+                            if (window.location.pathname === '/dashboard') {
+                                window.location.reload();
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    })
+                    .finally(() => {
+                        likeRequest = null;
+                    });
+            }
+        });
+    });
+
+</script>

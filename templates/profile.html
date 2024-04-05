@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ current_user.name }}'s Profile{% endblock %}
+
+{% block content %}
+<script>
+    function toggleEdit(button) {
+        var editFields = document.querySelectorAll('.edit-field');
+        var viewFields = document.querySelectorAll('.view-field');
+        var isEditing = button.getAttribute('data-editing') === 'true';
+        editFields.forEach(function(field) {
+            if (field.style.display === "none") {
+                field.style.display = "block";
+            } else {
+                field.style.display = "none";
+            }
+        });
+        viewFields.forEach(function(field) {
+            if (field.style.display === "none") {
+                field.style.display = "block";
+            } else {
+                field.style.display = "none";
+            }
+        });
+
+        if (isEditing) {
+            button.setAttribute('data-editing', 'false');
+            button.innerText = 'Edit Profile';
+        } else {
+            button.setAttribute('data-editing', 'true');
+            button.innerText = 'Cancel';
+        }
+    }
+    </script>
+    
+    <div class="profile-container">
+        <div id="profile-details">
+            <h1>{{ user.name }}'s Profile</h1>
+            <p>Email: {{ user.email }}</p>
+            
+            <div id="locationDisplay" class="view-field">
+                <p>Location: {{ user.location or 'Not specified' }}</p>
+            </div>
+            <!-- Bio Display -->
+            <div id="bioDisplay" class="view-field">
+                <p>About: {{ user.bio or 'Not specified' }}</p>
+            </div>
+        </div>
+        <!-- Edit Button -->
+        {% if current_user.id == user.id %}
+            <button onclick="toggleEdit(this)" data-editing="false">Edit Profile</button>
+        {% endif %}
+        <!-- Edit Fields (hidden by default) -->
+        <div id="editFields" class="edit-field" style="display:none;">
+            <form action="{{ url_for('edit_profile') }}" method="post">
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="{{ user.name }}">
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" value="{{ user.location or '' }}">
+                <label for="bio">About:</label>
+                <textarea id="bio" name="bio">{{ user.bio or '' }}</textarea>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+
+        {% if books %}
+        <div class="books-grid">
+            {% for book in books %}
+                {% include 'book_card.html' %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>You haven't added any books yet.</p>
+        {% endif %}
+        
+        {% if current_user.id == user.id %}
+        <a href="{{ url_for('add_book') }}" class="btn add-book-btn">Add a Book</a>
+        {% endif %}
+    </div>
+
+    
+{% endblock %}

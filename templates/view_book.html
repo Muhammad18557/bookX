@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="book-detail-container">
+    <h1 class="book-title">{{ book.title }}</h1>
+    <p class="book-author"><strong>Author:</strong> {{ book.author }}</p>
+    <p class="book-year"><strong>Year:</strong> {{ book.year or 'Not specified' }}</p>
+    <p class="book-genre"><strong>Genre:</strong> {{ book.genre or 'Not specified' }}</p>
+    <p class="book-rating"><strong>Rating:</strong> {{ book.rating or 'Not specified' }}</p>
+    
+    {% if book.review %}
+    <div class="book-review">
+        <h2>Review</h2>
+        <p>{{ book.review }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Summary, if it exists -->
+    {% if book.summary %}
+    <div class="book-summary">
+        <h2>Summary</h2>
+        <p>{{ book.summary }}</p>
+    </div>
+    {% endif %}
+
+    {% if current_user.id != book.user.id %}
+    <div class="book-owner">
+        <h2>Posted by</h2>
+        <p>{{ book.user.name }}</p>
+    </div>
+    {% else %} 
+    <div class="book-owner">
+        <h2>Posted by</h2>
+        <p>You</p>
+    </div>
+    {% endif %}
+    <!-- A button to go back to the user profile or book list -->
+    <a href="{{ url_for('profile', user_id=book.user.id) }}" class="btn back-btn">Owner's Profile</a>
+</div>
+{% endblock %}

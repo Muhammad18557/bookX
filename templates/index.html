@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to BookX - Peer-to-Peer Book Exchange{% endblock %}
+
+{% block content %}
+<div class="index-page-container">
+    <div class="hero">
+        <div class="hero-text">
+            <h1>Welcome to BookX</h1>
+            <p>Discover a world of books and share the joy of reading in a peer-to-peer network. Swipe, match, and exchange books with fellow book lovers.</p>
+        </div>
+    </div>
+
+    <div class="search-bar-container">
+        <form action="{{ url_for('index') }}" method="get">
+            <input type="text" name="query" placeholder="Search books..." value="{{ request.args.get('query', '') }}">
+            <a href="#" id="advancedSearchToggle">Advanced Search</a>
+            
+            {% if request.args.get('advanced', 'false') == 'false' %}
+            <div id="advancedSearchOptions" style="display: none;">
+            {% else %}
+            <div id="advancedSearchOptions">
+            {% endif %}
+                <input type="text" name="author" placeholder="Author" value="{{ request.args.get('author', '') }}">
+                <input type="text" name="genre" placeholder="Genre" value="{{ request.args.get('genre', '') }}">
+                <input type="number" name="year" placeholder="Year" value="{{ request.args.get('year', '') }}">
+            </div>
+    
+            <input type="hidden" name="advanced" id="advancedSearchState" value="{{ request.args.get('advanced', 'false') }}">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <section class="featured-books">
+        <h2>{% if query %}Search Results{% else %}Featured Books{% endif %}</h2>
+        <div class="books-grid">
+            {% for book in featured_books %}
+                {% include 'book_card.html' %}
+            {% else %}
+                <p>No books found{% if query %} matching your search criteria{% endif %}.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var toggle = document.getElementById('advancedSearchToggle');
+        var advSearch = document.getElementById('advancedSearchOptions');
+        var advSearchState = document.getElementById('advancedSearchState');
+        
+        toggle.addEventListener('click', function(event) {
+            event.preventDefault();
+            advSearch.style.display = advSearch.style.display === 'none' ? 'block' : 'none';
+            advSearchState.value = advSearch.style.display === 'none' ? 'false' : 'true';
+        });
+    });
+    </script>
+{% endblock %}

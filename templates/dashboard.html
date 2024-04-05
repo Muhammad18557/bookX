@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1>Welcome to BookX Dashboard</h1>
+
+    <section id="pending-likes">
+        <h2>Books You Want</h2>
+        {% for book in pending_likes %}
+            {% include 'book_card.html' %}
+        {% else %}
+            <p>No pending likes.</p>
+        {% endfor %}
+    </section>
+
+    <section id="matches">
+        <h2>Matches</h2>
+{% if matches %}
+    <p>Exchange Options: {{ matches|length }}</p>
+    {% for book1, book2 in matches %}
+    <div class="book-pair-row">
+        <a href="{{ url_for('exchange', book1_id=book1.id, book2_id=book2.id) }}">Exchange</a>
+        {% with book=book1 %}
+            {% include 'book_card.html' %}
+        {% endwith %}
+        {% with book=book2 %}
+            {% include 'book_card.html' %}
+        {% endwith %}
+    </div>
+    {% endfor %}
+{% else %}
+<p>No matches found.</p>
+{% endif %}
+
+    </section>
+
+    <section id="exchanges">
+        <h2>Exchanges History</h2>
+        {% if exchanges %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Your Book</th>
+                        <th>Exchanged With</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for exchange in exchanges %}
+                        <tr>
+                            <td>{{ exchange.book_a_title }}</td>
+                            <td>{{ exchange.book_b_title }}</td>
+                            <td>{{ exchange.status }}</td>
+                            <td>{{ exchange.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No exchanges found.</p>
+        {% endif %}
+    </section>
+    
+</div>
+{% endblock %}
